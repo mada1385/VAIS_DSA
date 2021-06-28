@@ -1,6 +1,5 @@
-import 'dart:io';
-import 'package:path_provider/path_provider.dart' as pathProvider;
-
+import 'package:firebase_core/firebase_core.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -9,11 +8,17 @@ import 'package:vaisdsa/provider/auth_provider.dart';
 import 'package:vaisdsa/provider/camera_provider.dart';
 import 'package:vaisdsa/screens/homescreen.dart';
 import 'package:vaisdsa/utils/app_theme_data.dart';
+import 'package:vaisdsa/models/session.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Directory directory = await pathProvider.getApplicationDocumentsDirectory();
-  Hive.init(directory.path);
+  Firebase.initializeApp();
+  await Hive.initFlutter();
+  Hive.registerAdapter(SessionAdapter());
+  await Hive.openBox<Session>('Session');
+
+  // Hive.registerAdapter(TransactionAdapter());
+  // await Hive.openBox<Session>('transactions');
   // Obtain a list of the available cameras on the device.
   final cameras = await availableCameras();
 

@@ -132,7 +132,7 @@ class DisplayPictureScreen extends StatelessWidget {
                       final localFile =
                           await tmpFile.copy('${appDir.path}/$fileName');
                       Provider.of<CameraProvider>(context, listen: false)
-                          .addimagepath(
+                          .editTransaction(
                               '${appDir.path}/$fileName', "tag", context);
                     },
                     child: Text(
@@ -158,7 +158,7 @@ class DisplayPictureScreen extends StatelessWidget {
                       final localFile =
                           await tmpFile.copy('${appDir.path}/$fileName');
                       Provider.of<CameraProvider>(context, listen: false)
-                          .addimagepath(
+                          .editTransaction(
                               '${appDir.path}/$fileName', "tag", context);
                     },
                     child: Text(

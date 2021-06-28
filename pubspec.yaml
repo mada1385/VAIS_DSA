@@ -38,14 +38,23 @@ dependencies:
   provider: 
   gallery_saver: ^2.0.3 
   image_picker: 
-  hive: 
-  hive_generator:
+  hive:
+  hive_flutter:
+  firebase_core: 
+  cloud_firestore: 
+  firebase_storage: 
+
+  
   image_gallery_saver: ^1.6.8
   geolocator: 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  # hive database generators
+  build_runner: 
+  hive_generator: 
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

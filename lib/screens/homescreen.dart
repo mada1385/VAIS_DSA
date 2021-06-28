@@ -28,9 +28,9 @@ class _HomescreenState extends State<Homescreen> {
   // }
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<CameraProvider>(context, listen: false).getfile();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   Provider.of<CameraProvider>(context, listen: false).getfile();
+    // });
 
     super.initState();
   }
@@ -172,7 +172,7 @@ class Mainscreen extends StatelessWidget {
                       disabledColor: Colors.grey,
                       onPressed: () {
                         Provider.of<CameraProvider>(context, listen: false)
-                            .addsession();
+                            .addTransaction();
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -196,7 +196,10 @@ class Mainscreen extends StatelessWidget {
                     color: Colors.transparent,
                     elevation: 30,
                     child: FlatButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Provider.of<CameraProvider>(context, listen: false)
+                            .startsession();
+                      },
                       child: Text(
                         "Browse old session",
                         style: Theme.of(context)
@@ -216,7 +219,10 @@ class Mainscreen extends StatelessWidget {
                     color: Colors.transparent,
                     elevation: 30,
                     child: FlatButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Provider.of<CameraProvider>(context, listen: false)
+                            .synctofirebase();
+                      },
                       child: Text(
                         "User Profile",
                         style: Theme.of(context)
