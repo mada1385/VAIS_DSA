@@ -1,12 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:vaisdsa/models/session.dart';
 
 class Newscard extends StatelessWidget {
+  final Session e;
+
+  const Newscard({Key key, this.e}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 20),
       child: Container(
-          height: 130,
           width: double.infinity,
           margin: EdgeInsets.symmetric(horizontal: 5.0),
           decoration: BoxDecoration(
@@ -25,14 +30,6 @@ class Newscard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  child: Text(
-                    "first image",
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
                 SizedBox(
                   height: 10,
                 ),
@@ -45,7 +42,10 @@ class Newscard extends StatelessWidget {
                           Radius.circular(8.0),
                         ),
                         child: new Image(
-                          image: new AssetImage("assets/damaged_leaves.jpeg"),
+                          image: e.pricturesstamps[0]["imagepath"] != null
+                              ? new FileImage(
+                                  File(e.pricturesstamps[0]["imagepath"]))
+                              : AssetImage("assets/damaged_leaves.jpeg"),
                           fit: BoxFit.cover,
                           height: 79,
                           width: 137,
@@ -57,15 +57,10 @@ class Newscard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text("Time : "),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text("Location : "),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text("Tag : ")
+                        Text("id : ${e.sessionid} "),
+                        Container(
+                            width: MediaQuery.of(context).size.width * .5,
+                            child: Text("Time :  ${e.stringsessiontime} ")),
                       ],
                     )
                   ],

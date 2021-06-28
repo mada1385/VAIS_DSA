@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vaisdsa/provider/camera_provider.dart';
+import 'package:vaisdsa/screens/browseoldannotation.dart';
 
 import 'camera_screen.dart';
 
@@ -197,8 +198,12 @@ class Mainscreen extends StatelessWidget {
                     elevation: 30,
                     child: FlatButton(
                       onPressed: () {
-                        Provider.of<CameraProvider>(context, listen: false)
-                            .startsession();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Browseoldannotaion()));
+                        // Provider.of<CameraProvider>(context, listen: false)
+                        //     .jsonfilebackup();
                       },
                       child: Text(
                         "Browse old session",
@@ -220,8 +225,8 @@ class Mainscreen extends StatelessWidget {
                     elevation: 30,
                     child: FlatButton(
                       onPressed: () {
-                        Provider.of<CameraProvider>(context, listen: false)
-                            .synctofirebase();
+                        // Provider.of<CameraProvider>(context, listen: false)
+                        //     .synctofirebase();
                       },
                       child: Text(
                         "User Profile",

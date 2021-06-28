@@ -37,13 +37,9 @@ class DisplayPictureScreen extends StatelessWidget {
                             elevation: 30,
                             child: FlatButton(
                               onPressed: () async {
-                                // File tmpFile = File(imagePath);
-                                // final appDir = await getExternalStorageDirectory();
-                                // final fileName = basename(imagePath);
-                                // final localFile =
-                                //     await tmpFile.copy('${appDir.path}/$fileName');
-                                // Provider.of<CameraProvider>(context, listen: false)
-                                //     .addimagepath('${appDir.path}/$fileName', "tag", context);
+                                Provider.of<CameraProvider>(context,
+                                        listen: false)
+                                    .choosetag("1");
                               },
                               child: Text(
                                 "1",
@@ -52,7 +48,10 @@ class DisplayPictureScreen extends StatelessWidget {
                                     .headline3
                                     .apply(color: Colors.white),
                               ),
-                              color: Colors.white.withOpacity(.5),
+                              color: Provider.of<CameraProvider>(context).tag ==
+                                      "1"
+                                  ? Colors.green
+                                  : Colors.white.withOpacity(.5),
                               shape: StadiumBorder(),
                               disabledColor: Colors.grey,
                             ),
@@ -62,13 +61,9 @@ class DisplayPictureScreen extends StatelessWidget {
                             elevation: 30,
                             child: FlatButton(
                               onPressed: () async {
-                                // File tmpFile = File(imagePath);
-                                // final appDir = await getExternalStorageDirectory();
-                                // final fileName = basename(imagePath);
-                                // final localFile =
-                                //     await tmpFile.copy('${appDir.path}/$fileName');
-                                // Provider.of<CameraProvider>(context, listen: false)
-                                //     .addimagepath('${appDir.path}/$fileName', "tag", context);
+                                Provider.of<CameraProvider>(context,
+                                        listen: false)
+                                    .choosetag("2");
                               },
                               child: Text(
                                 "2",
@@ -77,7 +72,10 @@ class DisplayPictureScreen extends StatelessWidget {
                                     .headline3
                                     .apply(color: Colors.white),
                               ),
-                              color: Colors.white.withOpacity(.5),
+                              color: Provider.of<CameraProvider>(context).tag ==
+                                      "2"
+                                  ? Colors.green
+                                  : Colors.white.withOpacity(.5),
                               shape: StadiumBorder(),
                               disabledColor: Colors.grey,
                             ),
@@ -87,13 +85,9 @@ class DisplayPictureScreen extends StatelessWidget {
                             elevation: 30,
                             child: FlatButton(
                               onPressed: () async {
-                                // File tmpFile = File(imagePath);
-                                // final appDir = await getExternalStorageDirectory();
-                                // final fileName = basename(imagePath);
-                                // final localFile =
-                                //     await tmpFile.copy('${appDir.path}/$fileName');
-                                // Provider.of<CameraProvider>(context, listen: false)
-                                //     .addimagepath('${appDir.path}/$fileName', "tag", context);
+                                Provider.of<CameraProvider>(context,
+                                        listen: false)
+                                    .choosetag("3");
                               },
                               child: Text(
                                 "3",
@@ -102,7 +96,10 @@ class DisplayPictureScreen extends StatelessWidget {
                                     .headline3
                                     .apply(color: Colors.white),
                               ),
-                              color: Colors.white.withOpacity(.5),
+                              color: Provider.of<CameraProvider>(context).tag ==
+                                      "3"
+                                  ? Colors.green
+                                  : Colors.white.withOpacity(.5),
                               shape: StadiumBorder(),
                               disabledColor: Colors.grey,
                             ),
@@ -132,8 +129,7 @@ class DisplayPictureScreen extends StatelessWidget {
                       final localFile =
                           await tmpFile.copy('${appDir.path}/$fileName');
                       Provider.of<CameraProvider>(context, listen: false)
-                          .editTransaction(
-                              '${appDir.path}/$fileName', "tag", context);
+                          .editTransaction('${appDir.path}/$fileName', context);
                     },
                     child: Text(
                       "save image",
@@ -152,17 +148,12 @@ class DisplayPictureScreen extends StatelessWidget {
                   elevation: 30,
                   child: FlatButton(
                     onPressed: () async {
-                      File tmpFile = File(imagePath);
-                      final appDir = await getExternalStorageDirectory();
-                      final fileName = basename(imagePath);
-                      final localFile =
-                          await tmpFile.copy('${appDir.path}/$fileName');
                       Provider.of<CameraProvider>(context, listen: false)
-                          .editTransaction(
-                              '${appDir.path}/$fileName', "tag", context);
+                          .cleartags();
+                      Navigator.pop(context);
                     },
                     child: Text(
-                      "save image",
+                      "discrard image",
                       style: Theme.of(context)
                           .textTheme
                           .headline3

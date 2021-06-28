@@ -6,13 +6,29 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaisdsa/models/boxes.dart';
 import 'package:vaisdsa/models/session.dart';
 
 class CameraProvider extends ChangeNotifier {
   String tag;
   List sessions = [];
+  List<Session> oldsessions;
+  getoldsessions() async {
+    final box = Boxes.getTransactions();
+
+    print(box.values.toList().toString());
+    oldsessions = box.values.toList();
+    oldsessions.forEach((element) {
+      print(
+          "====================================================================================================");
+      print(element.sessionid);
+      print(session.stringsessiontime.toString());
+      print(element.pricturesstamps);
+      print(
+          "====================================================================================================");
+    });
+    notifyListeners();
+  }
   // List pics = [
 
   // ];
@@ -23,6 +39,10 @@ class CameraProvider extends ChangeNotifier {
   String fileName;
   bool fileExists = false;
   Map<String, dynamic> fileContent;
+  cleartags() {
+    tag = "";
+    notifyListeners();
+  }
 
   Future uploadImageToFirebase(File image) async {
     dynamic value;
@@ -56,8 +76,8 @@ class CameraProvider extends ChangeNotifier {
         print(e.pricturesstamps.length);
         for (j = 0; j < e.pricturesstamps.length; j++) {
           if (!e.pricturesstamps[j]["issyncd"]) {
-            // final ref = await uploadImageToFirebase(
-            //     File(e.pricturesstamps[j]["imagepath"]));
+            final ref = await uploadImageToFirebase(
+                File(e.pricturesstamps[j]["imagepath"]));
 
             await ref.doc(sesionref.id).update({
               "picturestamps": FieldValue.arrayUnion([
@@ -110,8 +130,7 @@ class CameraProvider extends ChangeNotifier {
     // mybox.keys;
   }
 
-  Future<void> editTransaction(
-      String imagepath, String tag, BuildContext context) async {
+  Future<void> editTransaction(String imagepath, BuildContext context) async {
     Position lanlat = await _determinePosition();
     Samplepicture x = Samplepicture(imagepath, DateTime.now().toString(),
         lanlat.longitude.toString(), lanlat.latitude.toString(), tag, false);
@@ -121,7 +140,7 @@ class CameraProvider extends ChangeNotifier {
       "timestamp": x.timestamp,
       "lang": x.lang,
       "lat": x.lat,
-      "tag": x.tag,
+      "tag": tag,
     });
     session.save();
     final box = Boxes.getTransactions();
@@ -137,12 +156,14 @@ class CameraProvider extends ChangeNotifier {
       print(
           "====================================================================================================");
     });
+    tag = "";
+    notifyListeners();
     Navigator.pop(context);
   }
 
 // ======================================================================================================================
 
-  void startsession() async {
+  void jsonfilebackup() async {
     final box = Boxes.getTransactions();
     final boxes = box.values.toList();
     sessions = boxes
@@ -162,53 +183,6 @@ class CameraProvider extends ChangeNotifier {
 
       jsonFile.writeAsStringSync(json.encode(sessions));
     });
-  }
-
-  getfile() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    String file = pref.getString("sessionfile");
-    if (file != null) {
-      jsonFile = File(file);
-      print("getfile====>$file");
-      Map<String, dynamic> jsonFileContent =
-          json.decode(jsonFile.readAsStringSync() ?? {});
-      sessions = jsonFileContent["sessions"];
-    } else {
-      print("getfile====>no file");
-
-      startsession();
-    }
-  }
-
-  void choosetag(String x) {
-    tag = x;
-    notifyListeners();
-  }
-
-  void addsession() {
-    session = Session("sessionid", "stringsessiontime", [], false);
-    Map<String, dynamic> content = {
-      "sessionid": session.sessionid,
-      "stringsessiontime": session.stringsessiontime,
-      "pricturesstamps": session.pricturesstamps
-    };
-    sessions.add(content);
-    writeToFile();
-  }
-
-  void writeToFile() {
-    print("Writing to file!");
-    Map<String, dynamic> content = {"sessions": sessions};
-
-    print("File exists");
-    Map<String, dynamic> jsonFileContent =
-        json.decode(jsonFile.readAsStringSync() ?? {});
-
-    jsonFileContent.addAll(content);
-    jsonFile.writeAsStringSync(json.encode(jsonFileContent));
-
-    fileContent = json.decode(jsonFile.readAsStringSync());
-    print(fileContent);
   }
 
   Future<Position> _determinePosition() async {
@@ -237,6 +211,54 @@ class CameraProvider extends ChangeNotifier {
 
     return await Geolocator.getCurrentPosition();
   }
+
+  void choosetag(String x) {
+    tag = x;
+    notifyListeners();
+  }
+
+//=============================================================================================================
+  // getfile() async {
+  //   SharedPreferences pref = await SharedPreferences.getInstance();
+  //   String file = pref.getString("sessionfile");
+  //   if (file != null) {
+  //     jsonFile = File(file);
+  //     print("getfile====>$file");
+  //     Map<String, dynamic> jsonFileContent =
+  //         json.decode(jsonFile.readAsStringSync() ?? {});
+  //     sessions = jsonFileContent["sessions"];
+  //   } else {
+  //     print("getfile====>no file");
+
+  //     startsession();
+  //   }
+  // }
+
+  // void addsession() {
+  //   session = Session("sessionid", "stringsessiontime", [], false);
+  //   Map<String, dynamic> content = {
+  //     "sessionid": session.sessionid,
+  //     "stringsessiontime": session.stringsessiontime,
+  //     "pricturesstamps": session.pricturesstamps
+  //   };
+  //   sessions.add(content);
+  //   writeToFile();
+  // }
+
+  // void writeToFile() {
+  //   print("Writing to file!");
+  //   Map<String, dynamic> content = {"sessions": sessions};
+
+  //   print("File exists");
+  //   Map<String, dynamic> jsonFileContent =
+  //       json.decode(jsonFile.readAsStringSync() ?? {});
+
+  //   jsonFileContent.addAll(content);
+  //   jsonFile.writeAsStringSync(json.encode(jsonFileContent));
+
+  //   fileContent = json.decode(jsonFile.readAsStringSync());
+  //   print(fileContent);
+  // }
 
   // addimagepath(String imagepath, String tag, BuildContext context) async {
   //   Position lanlat = await _determinePosition();
