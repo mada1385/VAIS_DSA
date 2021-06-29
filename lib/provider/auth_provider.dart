@@ -1,7 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-
-
+import 'package:firebase_storage/firebase_storage.dart'; // For File Upload To Firestore
 
 enum AuthMode { login, signup }
 
@@ -79,38 +80,35 @@ class Auth with ChangeNotifier {
   //   _auth.signOut();
   // }
 
-
-String _catchLoginError(PlatformException err) {
-  switch (err.code) {
-    case "ERROR_INVALIED_EMAIL":
-      return "The email address is invalied, try using a different address.";
-    case "ERROR_WRONG_PASSWORD":
-      return "Incorrect email or password.";
-    case "ERROR_USER_NOT_FOUND":
-      return "This email address is not connected to an account. Signup?";
-    case "ERROR_USER_DISABLED":
-      return "This user is disabled. Try contacting support.";
-    case "ERROR_TOO_MANY_REQUESTS":
-      return "Please try again later.";
-    case "ERROR_OPERATION_NOT_ALLOWED":
-      return "ENABLE AUTH IN FIREBASE, NUCKLEHEAD!";
-    default:
-      return "Ouh ouh, new error! $err";
+  String _catchLoginError(PlatformException err) {
+    switch (err.code) {
+      case "ERROR_INVALIED_EMAIL":
+        return "The email address is invalied, try using a different address.";
+      case "ERROR_WRONG_PASSWORD":
+        return "Incorrect email or password.";
+      case "ERROR_USER_NOT_FOUND":
+        return "This email address is not connected to an account. Signup?";
+      case "ERROR_USER_DISABLED":
+        return "This user is disabled. Try contacting support.";
+      case "ERROR_TOO_MANY_REQUESTS":
+        return "Please try again later.";
+      case "ERROR_OPERATION_NOT_ALLOWED":
+        return "ENABLE AUTH IN FIREBASE, NUCKLEHEAD!";
+      default:
+        return "Ouh ouh, new error! $err";
+    }
   }
-}
 
-String _catchSignupError(PlatformException err) {
-  switch (err.toString()) {
-    case "ERROR_EMAIL_ALREADY_IN_USE":
-      return "This email address is already connected to an account. Forgot password?";
-    case "ERROR_INVALIED_EMAIL":
-      return "The email address is invalied, try using a different address.";
-    case "ERROR_WEAK_PASSWORD":
-      return "The password is weak, try using a stronger one.";
-    default:
-      return "Ouh ouh, new error! $err";
+  String _catchSignupError(PlatformException err) {
+    switch (err.toString()) {
+      case "ERROR_EMAIL_ALREADY_IN_USE":
+        return "This email address is already connected to an account. Forgot password?";
+      case "ERROR_INVALIED_EMAIL":
+        return "The email address is invalied, try using a different address.";
+      case "ERROR_WEAK_PASSWORD":
+        return "The password is weak, try using a stronger one.";
+      default:
+        return "Ouh ouh, new error! $err";
+    }
   }
-}
-
-
 }

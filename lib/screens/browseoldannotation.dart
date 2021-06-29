@@ -13,7 +13,7 @@ class Browseoldannotaion extends StatefulWidget {
 class _BrowseoldannotaionState extends State<Browseoldannotaion> {
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       Provider.of<CameraProvider>(context, listen: false).getoldsessions();
     });
     super.initState();
@@ -25,35 +25,43 @@ class _BrowseoldannotaionState extends State<Browseoldannotaion> {
       appBar: AppBar(
         backgroundColor: Color(0xFF579955),
         centerTitle: true,
-        title: Center(
-          child: Container(
-            child: Text(
-              "DSA",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: "Signatra",
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold),
-            ),
+        title: Container(
+          child: Text(
+            "DSA",
+            style: TextStyle(
+                color: Colors.white,
+                fontFamily: "Signatra",
+                fontSize: 24,
+                fontWeight: FontWeight.bold),
           ),
         ),
       ),
-      body: ListView.builder(
-          itemCount: Provider.of<CameraProvider>(context).oldsessions.length,
-          itemBuilder: (context, index) => GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Sessiondetail(
-                                session: Provider.of<CameraProvider>(context)
-                                    .oldsessions[index],
-                              )));
-                },
-                child: Newscard(
-                  e: Provider.of<CameraProvider>(context).oldsessions[index],
-                ),
-              )),
+      body: Provider.of<CameraProvider>(context).oldsessions.isEmpty
+          ? Center(
+              child: Theme(
+                data: ThemeData(accentColor: Color(0xFF579955)),
+                child: CircularProgressIndicator(),
+              ),
+            )
+          : ListView.builder(
+              itemCount:
+                  Provider.of<CameraProvider>(context).oldsessions.length,
+              itemBuilder: (context, index) => GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Sessiondetail(
+                                    session:
+                                        Provider.of<CameraProvider>(context)
+                                            .oldsessions[index],
+                                  )));
+                    },
+                    child: Newscard(
+                      e: Provider.of<CameraProvider>(context)
+                          .oldsessions[index],
+                    ),
+                  )),
     );
   }
 }

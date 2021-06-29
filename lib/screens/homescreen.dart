@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vaisdsa/provider/camera_provider.dart';
 import 'package:vaisdsa/screens/browseoldannotation.dart';
+import 'package:vaisdsa/screens/profileoptions.dart';
 
 import 'camera_screen.dart';
 
@@ -42,7 +43,7 @@ class _HomescreenState extends State<Homescreen> {
       Mainscreen(
         camera: widget.camera,
       ),
-      Mainscreen(),
+      Profileoptions(),
     ];
     return Scaffold(
         bottomNavigationBar: BottomNavigationBar(
@@ -54,7 +55,7 @@ class _HomescreenState extends State<Homescreen> {
             });
           },
           items: [
-            BottomNavigationBarItem(icon: Icon(Icons.logout), label: "logout"),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "logout"),
             BottomNavigationBarItem(
                 icon: Icon(Icons.settings), label: "configs")
           ],
@@ -202,8 +203,8 @@ class Mainscreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => Browseoldannotaion()));
-                        // Provider.of<CameraProvider>(context, listen: false)
-                        //     .jsonfilebackup();
+                        Provider.of<CameraProvider>(context, listen: false)
+                            .jsonfilebackup();
                       },
                       child: Text(
                         "Browse old session",

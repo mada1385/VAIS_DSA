@@ -42,7 +42,7 @@ class Newscard extends StatelessWidget {
                           Radius.circular(8.0),
                         ),
                         child: new Image(
-                          image: e.pricturesstamps[0]["imagepath"] != null
+                          image: !e.pricturesstamps.isEmpty
                               ? new FileImage(
                                   File(e.pricturesstamps[0]["imagepath"]))
                               : AssetImage("assets/damaged_leaves.jpeg"),

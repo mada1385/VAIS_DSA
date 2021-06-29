@@ -21,16 +21,14 @@ class _SessiondetailState extends State<Sessiondetail> {
       appBar: AppBar(
         backgroundColor: Color(0xFF579955),
         centerTitle: true,
-        title: Center(
-          child: Container(
-            child: Text(
-              "DSA",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: "Signatra",
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold),
-            ),
+        title: Container(
+          child: Text(
+            "DSA",
+            style: TextStyle(
+                color: Colors.white,
+                fontFamily: "Signatra",
+                fontSize: 24,
+                fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -89,36 +87,45 @@ class _SessiondetailState extends State<Sessiondetail> {
                     .toList(),
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
             Expanded(
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4),
-                itemCount: widget.session.pricturesstamps.length,
-                itemBuilder: (context, index) => GestureDetector(
-                    onTap: () {
-                      ctr.jumpToPage(index);
-                    },
-                    child: Card(
-                      color: Colors.transparent,
-                      elevation: 20,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * .2,
-                        decoration: BoxDecoration(
-                            // boxShadow: [
-                            //   BoxShadow(
-                            //       offset: Offset(0, .75),[
-                            //       blurRadius: 2,
-                            //       color: Colors.black12)
-                            // ],
-                            image: DecorationImage(
-                                fit: BoxFit.fill,
-                                image: FileImage(File(widget.session
-                                    .pricturesstamps[index]["imagepath"])))),
-                      ),
-                    )),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 45,
+                  ),
+                  Expanded(
+                    child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4),
+                      itemCount: widget.session.pricturesstamps.length,
+                      itemBuilder: (context, index) => GestureDetector(
+                          onTap: () {
+                            ctr.animateToPage(index,
+                                curve: Curves.easeOut,
+                                duration: Duration(milliseconds: 500));
+                          },
+                          child: Card(
+                            color: Colors.transparent,
+                            elevation: 20,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * .2,
+                              decoration: BoxDecoration(
+                                  // boxShadow: [
+                                  //   BoxShadow(
+                                  //       offset: Offset(0, .75),[
+                                  //       blurRadius: 2,
+                                  //       color: Colors.black12)
+                                  // ],
+                                  image: DecorationImage(
+                                      fit: BoxFit.fill,
+                                      image: FileImage(File(
+                                          widget.session.pricturesstamps[index]
+                                              ["imagepath"])))),
+                            ),
+                          )),
+                    ),
+                  ),
+                ],
               ),
             )
           ],

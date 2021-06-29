@@ -18,15 +18,7 @@ class CameraProvider extends ChangeNotifier {
 
     print(box.values.toList().toString());
     oldsessions = box.values.toList();
-    oldsessions.forEach((element) {
-      print(
-          "====================================================================================================");
-      print(element.sessionid);
-      print(session.stringsessiontime.toString());
-      print(element.pricturesstamps);
-      print(
-          "====================================================================================================");
-    });
+
     notifyListeners();
   }
   // List pics = [
@@ -45,14 +37,17 @@ class CameraProvider extends ChangeNotifier {
   }
 
   Future uploadImageToFirebase(File image) async {
-    dynamic value;
+    String imageref;
     String fileName = basename(image.path);
-    final firebaseStorageRef =
-        FirebaseStorage.instance.ref().child('uploads/$fileName');
-    await firebaseStorageRef.putFile(image).then((val) {
-      value = val.ref.fullPath;
+    FirebaseStorage storage = FirebaseStorage.instance;
+    Reference ref =
+        storage.ref().child(fileName ?? "image1" + DateTime.now().toString());
+    await ref.putFile(image).then((res) async {
+      imageref = await res.ref.getDownloadURL();
+      print(imageref);
     });
-    return value;
+
+    return imageref;
   }
 
   synctofirebase() async {
@@ -76,23 +71,26 @@ class CameraProvider extends ChangeNotifier {
         print(e.pricturesstamps.length);
         for (j = 0; j < e.pricturesstamps.length; j++) {
           if (!e.pricturesstamps[j]["issyncd"]) {
-            final ref = await uploadImageToFirebase(
-                File(e.pricturesstamps[j]["imagepath"]));
+            if (!e.pricturesstamps.isEmpty) {
+              // final ref = await uploadImageToFirebase(
+              //     File(e.pricturesstamps[j]["imagepath"]));
 
-            await ref.doc(sesionref.id).update({
-              "picturestamps": FieldValue.arrayUnion([
-                {
-                  "issyncd": true,
-                  "imagepath": e.pricturesstamps[j]["imagepath"],
-                  "timestamp": e.pricturesstamps[j]["timestamp"],
-                  "lang": e.pricturesstamps[j]["lang"],
-                  "lat": e.pricturesstamps[j]["lat"],
-                  "tag": e.pricturesstamps[j]["tag"],
-                }
-              ])
-            });
-            e.pricturesstamps[j]["issyncd"] = true;
-            e.save();
+              await ref.doc(sesionref.id).update({
+                "picturestamps": FieldValue.arrayUnion([
+                  {
+                    "issyncd": true,
+                    "imagepath": await uploadImageToFirebase(
+                        File(e.pricturesstamps[j]["imagepath"])),
+                    "timestamp": e.pricturesstamps[j]["timestamp"],
+                    "lang": e.pricturesstamps[j]["lang"],
+                    "lat": e.pricturesstamps[j]["lat"],
+                    "tag": e.pricturesstamps[j]["tag"],
+                  }
+                ])
+              });
+              e.pricturesstamps[j]["issyncd"] = true;
+              e.save();
+            }
           }
         }
         await ref.doc(sesionref.id).update({
