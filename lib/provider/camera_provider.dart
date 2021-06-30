@@ -61,43 +61,62 @@ class CameraProvider extends ChangeNotifier {
       final e = boxes[i];
 
       if (!e.synced) {
-        final sesionref = await ref.add({
-          "sessionid": e.sessionid,
-          "sessiontime": e.stringsessiontime,
-          "issynced": false,
-          "picturestamps": [],
-        });
-        print(sesionref.id);
-        print(e.pricturesstamps.length);
-        for (j = 0; j < e.pricturesstamps.length; j++) {
-          if (!e.pricturesstamps[j]["issyncd"]) {
-            if (!e.pricturesstamps.isEmpty) {
-              // final ref = await uploadImageToFirebase(
-              //     File(e.pricturesstamps[j]["imagepath"]));
+        try {
+          final sesionref = await ref.add({
+            "sessionid": e.sessionid,
+            "sessiontime": e.stringsessiontime,
+            "issynced": false,
+            "picturestamps": [],
+          });
+          print(sesionref.id);
+          print(e.pricturesstamps.length);
+          for (j = 0; j < e.pricturesstamps.length; j++) {
+            if (!e.pricturesstamps[j]["issyncd"]) {
+              if (!e.pricturesstamps.isEmpty) {
+                // final ref = await uploadImageToFirebase(
+                //     File(e.pricturesstamps[j]["imagepath"]));
 
-              await ref.doc(sesionref.id).update({
-                "picturestamps": FieldValue.arrayUnion([
-                  {
-                    "issyncd": true,
-                    "imagepath": await uploadImageToFirebase(
-                        File(e.pricturesstamps[j]["imagepath"])),
-                    "timestamp": e.pricturesstamps[j]["timestamp"],
-                    "lang": e.pricturesstamps[j]["lang"],
-                    "lat": e.pricturesstamps[j]["lat"],
-                    "tag": e.pricturesstamps[j]["tag"],
-                  }
-                ])
-              });
-              e.pricturesstamps[j]["issyncd"] = true;
-              e.save();
+                await ref.doc(sesionref.id).update({
+                  "picturestamps": FieldValue.arrayUnion([
+                    {
+                      "issyncd": true,
+                      "imagepath": await uploadImageToFirebase(
+                          File(e.pricturesstamps[j]["imagepath"])),
+                      "hsiimage": await uploadImageToFirebase(
+                          File(e.pricturesstamps[j]["hsiimagepath"])),
+                      "timestamp": e.pricturesstamps[j]["timestamp"],
+                      "lang": e.pricturesstamps[j]["lang"],
+                      "lat": e.pricturesstamps[j]["lat"],
+                      "tag": e.pricturesstamps[j]["tag"],
+                    }
+                  ])
+                });
+
+                e.pricturesstamps[j]["issyncd"] = true;
+                e.save();
+              }
             }
           }
+          await ref.doc(sesionref.id).update({
+            "issynced": true,
+          });
+          e.synced = true;
+          e.save();
+        } on Exception catch (e) {
+          //  if (onError.osError.errorCode == 110)
+          //   Scaffold.of(context).showSnackBar(SnackBar(
+          //       backgroundColor: Colors.white,
+          //       content: Container(
+          //         child: Text(
+          //           "برجاء توصيل الهاتف بشبكة الكاميرا",
+          //           style: TextStyle(
+          //               fontWeight: FontWeight.bold,
+          //               fontSize: 25,
+          //               color: Colors.red),
+          //         ),
+          //       )));
+          // print("================>" + e.toString());
         }
-        await ref.doc(sesionref.id).update({
-          "issynced": true,
-        });
-        e.synced = true;
-        e.save();
       }
     }
   }
@@ -128,13 +147,15 @@ class CameraProvider extends ChangeNotifier {
     // mybox.keys;
   }
 
-  Future<void> editTransaction(String imagepath, BuildContext context) async {
+  Future<void> editTransaction(
+      String imagepath, String hisimage, BuildContext context) async {
     Position lanlat = await _determinePosition();
     Samplepicture x = Samplepicture(imagepath, DateTime.now().toString(),
         lanlat.longitude.toString(), lanlat.latitude.toString(), tag, false);
     session.pricturesstamps.add({
       "issyncd": x.issynced,
       "imagepath": x.filepath,
+      "hsiimagepath": hisimage,
       "timestamp": x.timestamp,
       "lang": x.lang,
       "lat": x.lat,

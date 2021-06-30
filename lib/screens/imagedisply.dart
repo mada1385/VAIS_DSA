@@ -1,15 +1,17 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:vaisdsa/provider/camera_provider.dart';
 
 class DisplayPictureScreen extends StatelessWidget {
-  final String imagePath;
+  final String localphoto;
+  final String hsiphoto;
 
-  const DisplayPictureScreen({@required this.imagePath});
+  const DisplayPictureScreen({@required this.localphoto, this.hsiphoto});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class DisplayPictureScreen extends StatelessWidget {
                     width: double.infinity,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: FileImage(File(imagePath)),
+                            image: FileImage(File(localphoto)),
                             fit: BoxFit.fill)),
                     child: SafeArea(
                       child: Column(
@@ -112,8 +114,7 @@ class DisplayPictureScreen extends StatelessWidget {
                     width: double.infinity,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: FileImage(File(imagePath)),
-                            fit: BoxFit.fill)),
+                            image: NetworkImage(hsiphoto), fit: BoxFit.fill)),
                     child: Text("l"))),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -123,13 +124,18 @@ class DisplayPictureScreen extends StatelessWidget {
                   elevation: 30,
                   child: FlatButton(
                     onPressed: () async {
-                      File tmpFile = File(imagePath);
+                      String date = DateTime.now().toString();
                       final appDir = await getExternalStorageDirectory();
-                      final fileName = basename(imagePath);
-                      final localFile =
-                          await tmpFile.copy('${appDir.path}/$fileName');
+                      final localfilepath = '${appDir.path}/$date.JPG';
+                      final hsifilepath = '${appDir.path}/$date _hsi.JPG';
+                      await get(hsiphoto).then((value) async {
+                        File file = new File(join(hsifilepath));
+                        file.writeAsBytesSync(value.bodyBytes);
+                      });
+                      File tmpFile = File(localphoto);
+                      await tmpFile.copy(localfilepath);
                       Provider.of<CameraProvider>(context, listen: false)
-                          .editTransaction('${appDir.path}/$fileName', context);
+                          .editTransaction(localfilepath, hsifilepath, context);
                     },
                     child: Text(
                       "save image",

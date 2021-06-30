@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:vaisdsa/provider/auth_provider.dart';
 import 'package:vaisdsa/provider/camera_provider.dart';
+import 'package:vaisdsa/screens/captureimage.dart';
 import 'package:vaisdsa/screens/homescreen.dart';
 import 'package:vaisdsa/utils/app_theme_data.dart';
 
@@ -19,6 +20,8 @@ Future<void> main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(SessionAdapter());
   await Hive.openBox<Session>('Session');
+  await Hive.openBox<Session>('user');
+
   Firebase.initializeApp();
 
   // Hive.registerAdapter(TransactionAdapter());

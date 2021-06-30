@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:xml/xml.dart' as xml;
+
 import 'package:vaisdsa/screens/imagedisply.dart';
 
 class TakePictureScreen extends StatefulWidget {
@@ -28,6 +33,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       // Define the resolution to use.
       ResolutionPreset.medium,
     );
+
     // print(widget.camera.name);
     _initializeControllerFuture = _controller.initialize();
   }
@@ -42,82 +48,61 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: const Text('Take a picture')),
-      // You must wait until the controller is initialized before displaying the
-      // camera preview. Use a FutureBuilder to display a loading spinner until the
-      // controller has finished initializing.
+      backgroundColor: Colors.white24,
+      appBar: AppBar(
+        backgroundColor: Color(0xFF579955),
+        centerTitle: true,
+        title: Container(
+          child: Text(
+            "DSA",
+            style: TextStyle(
+                color: Colors.white,
+                fontFamily: "Signatra",
+                fontSize: 24,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
       body: FutureBuilder<void>(
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             // If the Future is complete, display the preview.
-            return Center(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      child: CameraPreview(_controller),
-                    ),
+            return Column(
+              children: [
+                Container(
+                  // width: double.infinity,
+                  child: CameraPreview(
+                    _controller,
+                    // child: Column(
+                    //   mainAxisAlignment: MainAxisAlignment.end,
+                    //   children: [
+                    //     Padding(
+                    //       padding: const EdgeInsets.all(20),
+                    //       child: Snackbutton(
+                    //           initializeControllerFuture:
+                    //               _initializeControllerFuture,
+                    //           controller: _controller),
+                    //     )
+                    //   ],
+                    // ),
                   ),
-                  Expanded(
-                      child: Container(
-                    width: double.infinity,
-                    child: CameraPreview(
-                      _controller,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: FlatButton(
-                              color: Colors.white,
-                              onPressed: () async {
-                                // Take the Picture in a try / catch block. If anything goes wrong,
-                                // catch the error.
-                                try {
-                                  // Ensure that the camera is initialized.
-                                  await _initializeControllerFuture;
-
-                                  // Attempt to take a picture and get the file `image`
-                                  // where it was saved.
-                                  final image = await _controller.takePicture();
-
-                                  // final File newImage = await File(image.path)
-                                  //     .copy('$path/image1.png');
-                                  // If the picture was taken, display it on a new screen.
-                                  print(image.path);
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          DisplayPictureScreen(
-                                        // Pass the automatically generated path to
-                                        // the DisplayPictureScreen widget.
-                                        imagePath: image.path,
-                                      ),
-                                    ),
-                                  );
-                                } catch (e) {
-                                  // If an error occurs, log the error to the console.
-                                  print(e);
-                                }
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Icon(
-                                  Icons.camera,
-                                  size: 40,
-                                ),
-                              ),
-                              shape: CircleBorder(),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  )),
-                ],
-              ),
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Snackbutton(
+                            initializeControllerFuture:
+                                _initializeControllerFuture,
+                            controller: _controller),
+                      )
+                    ],
+                  ),
+                ),
+              ],
             );
           } else {
             // Otherwise, display a loading indicator.
@@ -155,6 +140,76 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       //   },
       //   child: const Icon(Icons.camera_alt),
       // ),
+    );
+  }
+}
+
+class Snackbutton extends StatelessWidget {
+  const Snackbutton({
+    Key key,
+    @required Future<void> initializeControllerFuture,
+    @required CameraController controller,
+  })  : _initializeControllerFuture = initializeControllerFuture,
+        _controller = controller,
+        super(key: key);
+
+  final Future<void> _initializeControllerFuture;
+  final CameraController _controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      color: Colors.white,
+      onPressed: () async {
+        String hsiimagepath;
+
+        try {
+          await _initializeControllerFuture;
+
+          final phoneimage = await _controller.takePicture();
+          await get("http://192.168.1.254/?custom=1&cmd=1001").then((value) {
+            final document = xml.XmlDocument.parse(value.body)
+                .getElement("Function")
+                .getElement("File")
+                .getElement("FPATH")
+                .firstChild
+                .text
+                .replaceAll(r"\", r"/")
+                .replaceAll("A:", "");
+            print(document);
+            hsiimagepath = "http://192.168.1.254" + document;
+            print(phoneimage.path);
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => DisplayPictureScreen(
+                    localphoto: phoneimage.path, hsiphoto: hsiimagepath),
+              ),
+            );
+          }).catchError((onError) {
+            if (onError.osError.errorCode == 110)
+              Scaffold.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.white,
+                  content: Container(
+                    child: Text(
+                      "برجاء توصيل الهاتف بشبكة الكاميرا",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.red),
+                    ),
+                  )));
+            print("================>" + onError.toString());
+          });
+        } catch (e) {}
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Icon(
+          Icons.camera,
+          size: 40,
+        ),
+      ),
+      shape: CircleBorder(),
     );
   }
 }
