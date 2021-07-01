@@ -35,7 +35,7 @@ dependencies:
 
   path:
   path_provider:
-  camera:
+  camera: 
   provider: 
   gallery_saver: ^2.0.3 
   image_picker: 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vaisdsa/provider/auth_provider.dart';
 import 'package:vaisdsa/provider/camera_provider.dart';
 import 'package:vaisdsa/screens/browseoldannotation.dart';
 import 'package:vaisdsa/screens/profileoptions.dart';
@@ -16,24 +17,9 @@ class Homescreen extends StatefulWidget {
 
 class _HomescreenState extends State<Homescreen> {
   int index = 0;
-  // var camera;
-  // List<Widget> tabs = [
-  //   Mainscreen(
-  //     camera: camera,
-  //   ),
-  //   Mainscreen(),
-  // ];
-  // @override
-  // void initState() {
-  //   camera = widget.camera;
-  //   super.initState();
-  // }
+
   @override
   void initState() {
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   Provider.of<CameraProvider>(context, listen: false).getfile();
-    // });
-
     super.initState();
   }
 
@@ -55,7 +41,7 @@ class _HomescreenState extends State<Homescreen> {
             });
           },
           items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: "logout"),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
             BottomNavigationBarItem(
                 icon: Icon(Icons.settings), label: "configs")
           ],
@@ -105,10 +91,12 @@ class Mainscreen extends StatelessWidget {
             SizedBox(
               height: 40,
             ),
-            Container(
-              height: 60,
-              child: Image.asset("assets/logo.png"),
-            ),
+            Hero(
+                tag: "logo",
+                child: Image.asset(
+                  "assets/logo.png",
+                  height: 60,
+                )),
             SizedBox(
               height: 5,
             ),
@@ -130,11 +118,22 @@ class Mainscreen extends StatelessWidget {
             Center(
               child: Container(
                 child: Text(
-                  "Dental Smart Agriculture",
+                  "Data Science Africa",
                   style: TextStyle(
                       color: Colors.white,
                       fontFamily: "Signatra",
                       fontSize: 24),
+                ),
+              ),
+            ),
+            Center(
+              child: Container(
+                child: Text(
+                  "Multispectral Data Collection App ",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: "Signatra",
+                      fontSize: 20),
                 ),
               ),
             ),
@@ -174,7 +173,7 @@ class Mainscreen extends StatelessWidget {
                       disabledColor: Colors.grey,
                       onPressed: () {
                         Provider.of<CameraProvider>(context, listen: false)
-                            .addTransaction();
+                            .addTransaction(context);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -221,26 +220,26 @@ class Mainscreen extends StatelessWidget {
                   SizedBox(
                     height: 10,
                   ),
-                  Card(
-                    color: Colors.transparent,
-                    elevation: 30,
-                    child: FlatButton(
-                      onPressed: () {
-                        // Provider.of<CameraProvider>(context, listen: false)
-                        //     .synctofirebase();
-                      },
-                      child: Text(
-                        "User Profile",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline3
-                            .apply(color: Colors.white),
-                      ),
-                      color: Theme.of(context).primaryColor,
-                      shape: StadiumBorder(),
-                      disabledColor: Colors.grey,
-                    ),
-                  ),
+                  // Card(
+                  //   color: Colors.transparent,
+                  //   elevation: 30,
+                  //   child: FlatButton(
+                  //     onPressed: () {
+                  //       // Provider.of<CameraProvider>(context, listen: false)
+                  //       //     .synctofirebase();
+                  //     },
+                  //     child: Text(
+                  //       "User Profile",
+                  //       style: Theme.of(context)
+                  //           .textTheme
+                  //           .headline3
+                  //           .apply(color: Colors.white),
+                  //     ),
+                  //     color: Theme.of(context).primaryColor,
+                  //     shape: StadiumBorder(),
+                  //     disabledColor: Colors.grey,
+                  //   ),
+                  // ),
 
                   // Newscard(),
                   // Newscard(),

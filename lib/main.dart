@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:vaisdsa/models/user.dart';
 import 'package:vaisdsa/provider/auth_provider.dart';
 import 'package:vaisdsa/provider/camera_provider.dart';
-import 'package:vaisdsa/screens/captureimage.dart';
+import 'package:vaisdsa/screens/auth_screen.dart';
 import 'package:vaisdsa/screens/homescreen.dart';
+import 'package:vaisdsa/screens/splash_page.dart';
+
 import 'package:vaisdsa/utils/app_theme_data.dart';
 
 import 'models/session.dart';
@@ -19,8 +22,10 @@ Future<void> main() async {
   print(firstCamera.name);
   await Hive.initFlutter();
   Hive.registerAdapter(SessionAdapter());
+  Hive.registerAdapter(UserAdapter());
+
   await Hive.openBox<Session>('Session');
-  await Hive.openBox<Session>('user');
+  await Hive.openBox<User>('user');
 
   Firebase.initializeApp();
 
@@ -60,12 +65,11 @@ class MyApp extends StatelessWidget {
         // ),
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: appThemeData,
-        home: Homescreen(
-          camera: camera,
-        ),
-      ),
+          title: 'Flutter Demo',
+          theme: appThemeData,
+          home: SplashScreen(
+            camera: camera,
+          )),
     );
   }
 }

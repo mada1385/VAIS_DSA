@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:vaisdsa/components/profileoptioncard.dart';
+import 'package:vaisdsa/provider/auth_provider.dart';
 import 'package:vaisdsa/provider/camera_provider.dart';
 import 'package:vaisdsa/screens/auth_screen.dart';
 
@@ -69,7 +70,15 @@ class Profileoptions extends StatelessWidget {
               Profileoptioncard(
                 icon: Icon(Icons.logout),
                 title: "logout",
-                ontap: () async {},
+                ontap: () {
+                  Provider.of<Auth>(context, listen: false).logout();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AuthScreen(
+                                login: true,
+                              )));
+                },
               ),
             ],
           ),

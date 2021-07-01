@@ -6,12 +6,20 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:vaisdsa/models/boxes.dart';
 import 'package:vaisdsa/models/session.dart';
+import 'package:vaisdsa/provider/auth_provider.dart';
 
 class CameraProvider extends ChangeNotifier {
   String tag;
   List sessions = [];
+  dynamic selectedcamera;
+  initalcamera(camera) {
+    selectedcamera = camera;
+    notifyListeners();
+  }
+
   List<Session> oldsessions;
   getoldsessions() async {
     final box = Boxes.getTransactions();
@@ -122,8 +130,14 @@ class CameraProvider extends ChangeNotifier {
   }
 
 //==================================================================================================
-  Future addTransaction() async {
-    session = new Session("sessionid", DateTime.now().toString(), [], false);
+  Future addTransaction(BuildContext context) async {
+    session = new Session(
+        Provider.of<Auth>(context).loogeduser.username +
+            "-" +
+            DateTime.now().toString(),
+        DateTime.now().toString(),
+        [],
+        false);
     final box = Boxes.getTransactions();
     box.add(session);
 

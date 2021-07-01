@@ -2,17 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vaisdsa/provider/auth_provider.dart';
 
-class AuthScreen extends StatelessWidget {
+class AuthScreen extends StatefulWidget {
   final bool login;
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  final GlobalKey<FormFieldState> _emailKey = GlobalKey<FormFieldState>();
-  final GlobalKey<FormFieldState> _passwordKey = GlobalKey<FormFieldState>();
-
-  TextEditingController username = TextEditingController();
-  TextEditingController password = TextEditingController();
 
   AuthScreen({Key key, this.login}) : super(key: key);
+
+  @override
+  _AuthScreenState createState() => _AuthScreenState();
+}
+
+class _AuthScreenState extends State<AuthScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController username = TextEditingController();
+  final TextEditingController password = TextEditingController();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      Provider.of<Auth>(context, listen: false).checkforsuperuser();
+      // Provider.of<Auth>(context, listen: false).checkforuser(context);
+    });
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,32 +64,36 @@ class AuthScreen extends StatelessWidget {
                 SizedBox(
                   height: 0.135 * sh,
                 ),
-                Image.asset("assets/logo.png"),
-                AnimatedContainer(
-                  duration: Duration(milliseconds: _animationDuration),
-                  height: 0.064 * sh,
-                  child: Text(
-                    "DSA",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: "Signatra",
-                      fontSize: 0.064 * sh - 5,
-                    ),
+                Hero(tag: "logo", child: Image.asset("assets/logo.png")),
+                Text(
+                  "DSA",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: "Signatra",
+                    fontSize: 0.064 * sh - 5,
                   ),
                 ),
                 SizedBox(
                   height: 0.03 * sh,
                 ),
                 Text(
-                  "Dental Smart Agriculture",
+                  "Data Science Africa",
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF579955),
                     fontFamily: "Signatra",
                     fontSize: 0.04 * sh - 5,
                   ),
                 ),
+                Text(
+                  "Multispectral Data Collection App",
+                  style: TextStyle(
+                    color: Color(0xFF579955),
+                    fontFamily: "Signatra",
+                    fontSize: 0.03 * sh - 5,
+                  ),
+                ),
                 SizedBox(
-                  height: 0.12 * sh,
+                  height: 0.06 * sh,
                 ),
                 Form(
                   key: _formKey,
@@ -88,29 +103,20 @@ class AuthScreen extends StatelessWidget {
                     children: <Widget>[
                       TextFormField(
                         controller: username,
-                        key: _emailKey,
+                        // key: _emailKey,
                         keyboardType: TextInputType.emailAddress,
                         style: Theme.of(context).textTheme.headline3,
                         decoration: InputDecoration(
                           labelText: 'Username',
                         ),
                         validator: (email) {
-                          if (!email.contains('@'))
-                            return "Please, enter a valid email.";
-                          if (email.lastIndexOf('@') > email.lastIndexOf('.'))
-                            return "Please, enter a valid email.";
-                          if (email.lastIndexOf('@') != email.indexOf('@'))
-                            return "Please, enter a valid email.";
-                          if (email.length < 10) return "Email is too short.";
-                          if (email.indexOf('@') == 0 ||
-                              email.lastIndexOf('.') == email.length - 1)
-                            return "Please, enter a valid email.";
+                          if (email.length < 2) return "UserName is too short.";
 
                           return null;
                         },
                       ),
                       TextFormField(
-                        key: _passwordKey,
+                        // key: _passwordKey,
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: true,
                         style: Theme.of(context).textTheme.headline3,
@@ -130,10 +136,10 @@ class AuthScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 0.060 * sh),
                 Loginsnackbarbutton(
-                  login: login,
+                  login: widget.login,
                   formKey: _formKey,
-                  emailKey: _emailKey,
-                  passwordKey: _passwordKey,
+                  username: username,
+                  password: password,
                 ),
               ],
             ),
@@ -149,18 +155,14 @@ class Loginsnackbarbutton extends StatelessWidget {
     Key key,
     @required this.login,
     this.formKey,
-    this.emailKey,
-    this.passwordKey,
     this.username,
     this.password,
   }) : super(key: key);
-  TextEditingController username;
-  TextEditingController password;
+  final TextEditingController username;
+  final TextEditingController password;
 
   final GlobalKey<FormState> formKey;
 
-  final GlobalKey<FormFieldState> emailKey;
-  final GlobalKey<FormFieldState> passwordKey;
   final bool login;
 
   @override
@@ -180,7 +182,13 @@ class Loginsnackbarbutton extends StatelessWidget {
                 .apply(color: Colors.white),
           ),
           onPressed: () {
-            if (formKey.currentState.validate()) {}
+            if (formKey.currentState.validate()) {
+              login
+                  ? Provider.of<Auth>(context, listen: false)
+                      .login(username.text, password.text, context)
+                  : Provider.of<Auth>(context, listen: false)
+                      .adduser(username.text, password.text, context);
+            }
           }),
     );
   }

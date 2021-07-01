@@ -12,4 +12,19 @@ class User extends HiveObject {
   final bool superuser;
 
   User(this.username, this.password, this.superuser);
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['username'] = this.username;
+    data['password'] = this.password;
+    data['super'] = this.superuser;
+    return data;
+  }
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      json['username'],
+      json['password'],
+      json['super'],
+    );
+  }
 }

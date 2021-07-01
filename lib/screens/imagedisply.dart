@@ -41,17 +41,17 @@ class DisplayPictureScreen extends StatelessWidget {
                               onPressed: () async {
                                 Provider.of<CameraProvider>(context,
                                         listen: false)
-                                    .choosetag("1");
+                                    .choosetag("Brown Spots");
                               },
                               child: Text(
-                                "1",
+                                "Brown Spots",
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline3
                                     .apply(color: Colors.white),
                               ),
                               color: Provider.of<CameraProvider>(context).tag ==
-                                      "1"
+                                      "Brown Spots"
                                   ? Colors.green
                                   : Colors.white.withOpacity(.5),
                               shape: StadiumBorder(),
@@ -65,17 +65,17 @@ class DisplayPictureScreen extends StatelessWidget {
                               onPressed: () async {
                                 Provider.of<CameraProvider>(context,
                                         listen: false)
-                                    .choosetag("2");
+                                    .choosetag("Blast");
                               },
                               child: Text(
-                                "2",
+                                "Blast",
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline3
                                     .apply(color: Colors.white),
                               ),
                               color: Provider.of<CameraProvider>(context).tag ==
-                                      "2"
+                                      "Blast"
                                   ? Colors.green
                                   : Colors.white.withOpacity(.5),
                               shape: StadiumBorder(),
@@ -89,17 +89,17 @@ class DisplayPictureScreen extends StatelessWidget {
                               onPressed: () async {
                                 Provider.of<CameraProvider>(context,
                                         listen: false)
-                                    .choosetag("3");
+                                    .choosetag("Healthy");
                               },
                               child: Text(
-                                "3",
+                                "Healthy",
                                 style: Theme.of(context)
                                     .textTheme
                                     .headline3
                                     .apply(color: Colors.white),
                               ),
                               color: Provider.of<CameraProvider>(context).tag ==
-                                      "3"
+                                      "Healthy"
                                   ? Colors.green
                                   : Colors.white.withOpacity(.5),
                               shape: StadiumBorder(),
@@ -115,7 +115,7 @@ class DisplayPictureScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                         image: DecorationImage(
                             image: NetworkImage(hsiphoto), fit: BoxFit.fill)),
-                    child: Text("l"))),
+                    child: Text(""))),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

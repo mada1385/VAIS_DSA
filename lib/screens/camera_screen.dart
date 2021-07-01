@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:provider/provider.dart';
+import 'package:vaisdsa/provider/camera_provider.dart';
 import 'package:xml/xml.dart' as xml;
 
 import 'package:vaisdsa/screens/imagedisply.dart';
@@ -29,7 +31,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     // create a CameraController.
     _controller = CameraController(
       // Get a specific camera from the list of available cameras.
-      widget.camera,
+      Provider.of<CameraProvider>(context, listen: false).selectedcamera,
+
       // Define the resolution to use.
       ResolutionPreset.medium,
     );
