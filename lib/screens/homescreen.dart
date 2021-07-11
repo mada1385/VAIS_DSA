@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vaisdsa/provider/auth_provider.dart';
 import 'package:vaisdsa/provider/camera_provider.dart';
 import 'package:vaisdsa/screens/browseoldannotation.dart';
 import 'package:vaisdsa/screens/profileoptions.dart';
@@ -41,9 +40,9 @@ class _HomescreenState extends State<Homescreen> {
             });
           },
           items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "الرئيسية"),
             BottomNavigationBarItem(
-                icon: Icon(Icons.settings), label: "configs")
+                icon: Icon(Icons.settings), label: "الاعدادات")
           ],
         ),
         // floatingActionButton: FloatingActionButton(
@@ -172,17 +171,64 @@ class Mainscreen extends StatelessWidget {
                       shape: StadiumBorder(),
                       disabledColor: Colors.grey,
                       onPressed: () {
-                        Provider.of<CameraProvider>(context, listen: false)
-                            .addTransaction(context);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => TakePictureScreen(
-                                      camera: camera,
-                                    )));
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          child: AlertDialog(
+                            content: Container(
+                              color: Colors.white,
+                              height: 250,
+                              padding: EdgeInsets.all(50),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.warning_amber_outlined,
+                                    color: Color(0xFF579955),
+                                    size: 88,
+                                  ),
+                                  Text("تآكد من توصبل الهاتف بشبكة الكاميرا"),
+                                ],
+                              ),
+                            ),
+                            actions: [
+                              Center(
+                                child: Card(
+                                  color: Colors.transparent,
+                                  elevation: 30,
+                                  child: FlatButton(
+                                    onPressed: () {
+                                      Provider.of<CameraProvider>(context,
+                                              listen: false)
+                                          .addTransaction(context);
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TakePictureScreen(
+                                                    camera: camera,
+                                                  )));
+                                    },
+                                    child: Text(
+                                      " تآكيد",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline3
+                                          .apply(color: Colors.white),
+                                    ),
+                                    color: Theme.of(context).primaryColor,
+                                    shape: StadiumBorder(),
+                                    disabledColor: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
                       },
                       child: Text(
-                        "start session",
+                        "بدا الجلسة",
                         style: Theme.of(context)
                             .textTheme
                             .headline3
@@ -202,11 +248,9 @@ class Mainscreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => Browseoldannotaion()));
-                        Provider.of<CameraProvider>(context, listen: false)
-                            .jsonfilebackup();
                       },
                       child: Text(
-                        "Browse old session",
+                        "تصفح الجلسات القديمة",
                         style: Theme.of(context)
                             .textTheme
                             .headline3

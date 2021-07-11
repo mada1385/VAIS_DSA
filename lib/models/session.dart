@@ -40,7 +40,7 @@ class Session extends HiveObject {
 //   late double amount;
 // }
 class Samplepicture {
-  final String filepath, timestamp, lang, lat, tag;
+  final String filepath, timestamp, lang, lat, tag, stage, planetid;
   bool issynced;
 
   Samplepicture(
@@ -50,6 +50,8 @@ class Samplepicture {
     this.lat,
     this.tag,
     this.issynced,
+    this.stage,
+    this.planetid,
   );
   // factory Samplepicture.fromJson(Map<String, dynamic> json) {
   //   return Samplepicture(

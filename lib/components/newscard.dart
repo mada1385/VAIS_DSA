@@ -57,10 +57,12 @@ class Newscard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text("id : ${e.sessionid} "),
                         Container(
                             width: MediaQuery.of(context).size.width * .5,
-                            child: Text("Time :  ${e.stringsessiontime} ")),
+                            child: Text("رقم تعريفي : ${e.sessionid} , ")),
+                        Container(
+                            width: MediaQuery.of(context).size.width * .5,
+                            child: Text("التوقيت :  ${e.stringsessiontime} ")),
                       ],
                     )
                   ],

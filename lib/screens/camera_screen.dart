@@ -50,99 +50,170 @@ class TakePictureScreenState extends State<TakePictureScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white24,
-      appBar: AppBar(
-        backgroundColor: Color(0xFF579955),
-        centerTitle: true,
-        title: Container(
-          child: Text(
-            "DSA",
-            style: TextStyle(
-                color: Colors.white,
-                fontFamily: "Signatra",
-                fontSize: 24,
-                fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
-      body: FutureBuilder<void>(
-        future: _initializeControllerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            // If the Future is complete, display the preview.
-            return Column(
-              children: [
-                Container(
-                  // width: double.infinity,
-                  child: CameraPreview(
-                    _controller,
-                    // child: Column(
-                    //   mainAxisAlignment: MainAxisAlignment.end,
-                    //   children: [
-                    //     Padding(
-                    //       padding: const EdgeInsets.all(20),
-                    //       child: Snackbutton(
-                    //           initializeControllerFuture:
-                    //               _initializeControllerFuture,
-                    //           controller: _controller),
-                    //     )
-                    //   ],
-                    // ),
+    return WillPopScope(
+      onWillPop: () {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          child: AlertDialog(
+            content: Container(
+              color: Colors.white,
+              height: 250,
+              padding: EdgeInsets.all(50),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.warning_amber_outlined,
+                    color: Color(0xFF579955),
+                    size: 88,
                   ),
-                ),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Text("تاكيد الخروج من الجلسة"),
+                ],
+              ),
+            ),
+            actions: [
+              Center(
+                child: Card(
+                  color: Colors.transparent,
+                  elevation: 30,
+                  child: Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Snackbutton(
-                            initializeControllerFuture:
-                                _initializeControllerFuture,
-                            controller: _controller),
-                      )
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          " الغاء",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline3
+                              .apply(color: Colors.white),
+                        ),
+                        color: Theme.of(context).primaryColor,
+                        shape: StadiumBorder(),
+                        disabledColor: Colors.grey,
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          " تآكيد",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline3
+                              .apply(color: Theme.of(context).primaryColor),
+                        ),
+                        color: Colors.white,
+                        shape: StadiumBorder(),
+                        disabledColor: Colors.grey,
+                      ),
                     ],
                   ),
                 ),
-              ],
-            );
-          } else {
-            // Otherwise, display a loading indicator.
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
+              ),
+            ],
+          ),
+        );
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white24,
+        appBar: AppBar(
+          backgroundColor: Color(0xFF579955),
+          centerTitle: true,
+          title: Container(
+            child: Text(
+              "DSA",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: "Signatra",
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        body: FutureBuilder<void>(
+          future: _initializeControllerFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              // If the Future is complete, display the preview.
+              return Column(
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height * .75,
+                    width: double.infinity,
+                    child: CameraPreview(
+                      _controller,
+                      // child: Column(
+                      //   mainAxisAlignment: MainAxisAlignment.end,
+                      //   children: [
+                      //     Padding(
+                      //       padding: const EdgeInsets.all(20),
+                      //       child: Snackbutton(
+                      //           initializeControllerFuture:
+                      //               _initializeControllerFuture,
+                      //           controller: _controller),
+                      //     )
+                      //   ],
+                      // ),
+                    ),
+                  ),
+                  Container(
+                    height: MediaQuery.of(context).size.height * .13,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Snackbutton(
+                            initializeControllerFuture:
+                                _initializeControllerFuture,
+                            controller: _controller)
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              // Otherwise, display a loading indicator.
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+        // floatingActionButton: FloatingActionButton(
+        //   // Provide an onPressed callback.
+        //   onPressed: () async {
+        //     // Take the Picture in a try / catch block. If anything goes wrong,
+        //     // catch the error.
+        //     try {
+        //       // Ensure that the camera is initialized.
+        //       await _initializeControllerFuture;
+
+        //       // Attempt to take a picture and get the file `image`
+        //       // where it was saved.
+        //       final image = await _controller.takePicture();
+
+        //       // If the picture was taken, display it on a new screen.
+        //       await Navigator.of(context).push(
+        //         MaterialPageRoute(
+        //           builder: (context) => DisplayPictureScreen(
+        //             // Pass the automatically generated path to
+        //             // the DisplayPictureScreen widget.
+        //             imagePath: image.path,
+        //           ),
+        //         ),
+        //       );
+        //     } catch (e) {
+        //       // If an error occurs, log the error to the console.
+        //       print(e);
+        //     }
+        //   },
+        //   child: const Icon(Icons.camera_alt),
+        // ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   // Provide an onPressed callback.
-      //   onPressed: () async {
-      //     // Take the Picture in a try / catch block. If anything goes wrong,
-      //     // catch the error.
-      //     try {
-      //       // Ensure that the camera is initialized.
-      //       await _initializeControllerFuture;
-
-      //       // Attempt to take a picture and get the file `image`
-      //       // where it was saved.
-      //       final image = await _controller.takePicture();
-
-      //       // If the picture was taken, display it on a new screen.
-      //       await Navigator.of(context).push(
-      //         MaterialPageRoute(
-      //           builder: (context) => DisplayPictureScreen(
-      //             // Pass the automatically generated path to
-      //             // the DisplayPictureScreen widget.
-      //             imagePath: image.path,
-      //           ),
-      //         ),
-      //       );
-      //     } catch (e) {
-      //       // If an error occurs, log the error to the console.
-      //       print(e);
-      //     }
-      //   },
-      //   child: const Icon(Icons.camera_alt),
-      // ),
     );
   }
 }
@@ -170,39 +241,39 @@ class Snackbutton extends StatelessWidget {
           await _initializeControllerFuture;
 
           final phoneimage = await _controller.takePicture();
-          await get("http://192.168.1.254/?custom=1&cmd=1001").then((value) {
-            final document = xml.XmlDocument.parse(value.body)
-                .getElement("Function")
-                .getElement("File")
-                .getElement("FPATH")
-                .firstChild
-                .text
-                .replaceAll(r"\", r"/")
-                .replaceAll("A:", "");
-            print(document);
-            hsiimagepath = "http://192.168.1.254" + document;
-            print(phoneimage.path);
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => DisplayPictureScreen(
-                    localphoto: phoneimage.path, hsiphoto: hsiimagepath),
-              ),
-            );
-          }).catchError((onError) {
-            if (onError.osError.errorCode == 110)
-              Scaffold.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.white,
-                  content: Container(
-                    child: Text(
-                      "برجاء توصيل الهاتف بشبكة الكاميرا",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.red),
-                    ),
-                  )));
-            print("================>" + onError.toString());
-          });
+          // await get("http://192.168.1.254/?custom=1&cmd=1001").then((value) {
+          //   final document = xml.XmlDocument.parse(value.body)
+          //       .getElement("Function")
+          //       .getElement("File")
+          //       .getElement("FPATH")
+          //       .firstChild
+          //       .text
+          //       .replaceAll(r"\", r"/")
+          //       .replaceAll("A:", "");
+          //   print(document);
+          //   hsiimagepath = "http://192.168.1.254" + document;
+          //   print(phoneimage.path);
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => DisplayPictureScreen(
+                  localphoto: phoneimage.path, hsiphoto: hsiimagepath),
+            ),
+          );
+          // }).catchError((onError) {
+          //   if (onError.osError.errorCode == 110)
+          //     Scaffold.of(context).showSnackBar(SnackBar(
+          //         backgroundColor: Colors.white,
+          //         content: Container(
+          //           child: Text(
+          //             "برجاء توصيل الهاتف بشبكة الكاميرا",
+          //             style: TextStyle(
+          //                 fontWeight: FontWeight.bold,
+          //                 fontSize: 20,
+          //                 color: Colors.red),
+          //           ),
+          //         )));
+          //   print("================>" + onError.toString());
+          // });
         } catch (e) {}
       },
       child: Padding(

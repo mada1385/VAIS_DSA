@@ -107,10 +107,10 @@ class _AuthScreenState extends State<AuthScreen> {
                         keyboardType: TextInputType.emailAddress,
                         style: Theme.of(context).textTheme.headline3,
                         decoration: InputDecoration(
-                          labelText: 'Username',
+                          labelText: 'اسم المستحدم',
                         ),
                         validator: (email) {
-                          if (email.length < 2) return "UserName is too short.";
+                          if (email.length < 2) return "اسم المستخدم قصير جدًا";
 
                           return null;
                         },
@@ -121,11 +121,11 @@ class _AuthScreenState extends State<AuthScreen> {
                         obscureText: true,
                         style: Theme.of(context).textTheme.headline3,
                         decoration: InputDecoration(
-                          labelText: 'Password',
+                          labelText: 'كلمةالسر',
                         ),
                         validator: (password) {
                           if (password.trim().length < 8)
-                            return "Password must be 8 characters at least.";
+                            return "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل";
 
                           return null;
                         },

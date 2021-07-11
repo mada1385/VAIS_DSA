@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
@@ -65,6 +66,15 @@ class MyApp extends StatelessWidget {
         // ),
       ],
       child: MaterialApp(
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: [
+            Locale('en', ""),
+            Locale("ar", "MA"),
+          ],
+          locale: Locale("ar", "MA"),
           title: 'Flutter Demo',
           theme: appThemeData,
           home: SplashScreen(

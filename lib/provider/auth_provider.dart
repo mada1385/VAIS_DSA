@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -82,6 +81,7 @@ class Auth with ChangeNotifier {
       if (username == user.username && password == user.password) {
         print("logged");
         flag = true;
+        loogeduser = user;
         sp.setString("user", json.encode(user.toJson()));
 
         break;

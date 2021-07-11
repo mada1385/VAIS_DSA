@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +13,11 @@ import 'package:vaisdsa/models/session.dart';
 import 'package:vaisdsa/provider/auth_provider.dart';
 
 class CameraProvider extends ChangeNotifier {
+  final DateFormat formatter = DateFormat('yyyy-MM-dd mm-HH', "ar");
+  bool isloading = false;
   String tag;
+  TextEditingController planetid = TextEditingController();
+  String stage;
   List sessions = [];
   dynamic selectedcamera;
   initalcamera(camera) {
@@ -41,6 +46,8 @@ class CameraProvider extends ChangeNotifier {
   Map<String, dynamic> fileContent;
   cleartags() {
     tag = "";
+    stage = "";
+    planetid.clear();
     notifyListeners();
   }
 
@@ -58,7 +65,16 @@ class CameraProvider extends ChangeNotifier {
     return imageref;
   }
 
-  synctofirebase() async {
+  synctofirebase(BuildContext context) async {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        });
+    notifyListeners();
     final ref = FirebaseFirestore.instance.collection("Sessions");
     int i, j;
     final box = Boxes.getTransactions();
@@ -96,6 +112,8 @@ class CameraProvider extends ChangeNotifier {
                       "lang": e.pricturesstamps[j]["lang"],
                       "lat": e.pricturesstamps[j]["lat"],
                       "tag": e.pricturesstamps[j]["tag"],
+                      "stage": e.pricturesstamps[j]["stage"],
+                      "planetid": e.pricturesstamps[j]["planetid"]
                     }
                   ])
                 });
@@ -127,15 +145,23 @@ class CameraProvider extends ChangeNotifier {
         }
       }
     }
+    isloading = false;
+    notifyListeners();
+
+    Navigator.pop(context);
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text("تم التزامن بنجاح"),
+      duration: Duration(seconds: 2),
+    ));
   }
 
 //==================================================================================================
   Future addTransaction(BuildContext context) async {
     session = new Session(
-        Provider.of<Auth>(context).loogeduser.username +
+        Provider.of<Auth>(context, listen: false).loogeduser.username +
             "-" +
             DateTime.now().toString(),
-        DateTime.now().toString(),
+        formatter.format(DateTime.now()),
         [],
         false);
     final box = Boxes.getTransactions();
@@ -161,37 +187,55 @@ class CameraProvider extends ChangeNotifier {
     // mybox.keys;
   }
 
-  Future<void> editTransaction(
-      String imagepath, String hisimage, BuildContext context) async {
-    Position lanlat = await _determinePosition();
-    Samplepicture x = Samplepicture(imagepath, DateTime.now().toString(),
-        lanlat.longitude.toString(), lanlat.latitude.toString(), tag, false);
-    session.pricturesstamps.add({
-      "issyncd": x.issynced,
-      "imagepath": x.filepath,
-      "hsiimagepath": hisimage,
-      "timestamp": x.timestamp,
-      "lang": x.lang,
-      "lat": x.lat,
-      "tag": tag,
-    });
-    session.save();
-    final box = Boxes.getTransactions();
+  Future<void> editTransaction(String imagepath, String hisimage,
+      BuildContext context, bool clear) async {
+    if (tag != "") {
+      Position lanlat = await _determinePosition();
+      Samplepicture x = Samplepicture(
+          imagepath,
+          DateTime.now().toString(),
+          lanlat.longitude.toString(),
+          lanlat.latitude.toString(),
+          tag,
+          false,
+          stage,
+          planetid.text);
+      session.pricturesstamps.add({
+        "issyncd": x.issynced,
+        "imagepath": x.filepath,
+        "hsiimagepath": hisimage,
+        "timestamp": x.timestamp,
+        "lang": x.lang,
+        "lat": x.lat,
+        "tag": tag,
+        "stage": x.stage,
+        "planetid": x.planetid
+      });
+      session.save();
+      final box = Boxes.getTransactions();
 
-    print(box.values.toList().toString());
-    final boxes = box.values.toList();
-    boxes.forEach((element) {
-      print(
-          "====================================================================================================");
-      print(element.sessionid);
-      print(session.stringsessiontime);
-      print(element.pricturesstamps);
-      print(
-          "====================================================================================================");
-    });
-    tag = "";
-    notifyListeners();
-    Navigator.pop(context);
+      print(box.values.toList().toString());
+      final boxes = box.values.toList();
+      boxes.forEach((element) {
+        print(
+            "====================================================================================================");
+        print(element.sessionid);
+        print(session.stringsessiontime);
+        print(element.pricturesstamps);
+        print(
+            "====================================================================================================");
+      });
+      if (clear) {
+        cleartags();
+      }
+      notifyListeners();
+      Navigator.pop(context);
+    } else {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text("برجاء ادخال نوع المرض"),
+        duration: Duration(seconds: 2),
+      ));
+    }
   }
 
 // ======================================================================================================================
@@ -247,6 +291,11 @@ class CameraProvider extends ChangeNotifier {
 
   void choosetag(String x) {
     tag = x;
+    notifyListeners();
+  }
+
+  void choosestage(String x) {
+    stage = x;
     notifyListeners();
   }
 
