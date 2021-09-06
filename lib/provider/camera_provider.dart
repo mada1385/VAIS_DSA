@@ -128,23 +128,10 @@ class CameraProvider extends ChangeNotifier {
           });
           e.synced = true;
           e.save();
-        } on Exception catch (e) {
-          //  if (onError.osError.errorCode == 110)
-          //   Scaffold.of(context).showSnackBar(SnackBar(
-          //       backgroundColor: Colors.white,
-          //       content: Container(
-          //         child: Text(
-          //           "برجاء توصيل الهاتف بشبكة الكاميرا",
-          //           style: TextStyle(
-          //               fontWeight: FontWeight.bold,
-          //               fontSize: 25,
-          //               color: Colors.red),
-          //         ),
-          //       )));
-          // print("================>" + e.toString());
-        }
+        } on Exception catch (e) {}
       }
     }
+
     isloading = false;
     notifyListeners();
 
@@ -189,8 +176,8 @@ class CameraProvider extends ChangeNotifier {
 
   Future<void> editTransaction(String imagepath, String hisimage,
       BuildContext context, bool clear) async {
-    if (tag != "") {
-      Position lanlat = await _determinePosition();
+    if (tag != null) {
+      Position lanlat = await _determinePosition(context);
       Samplepicture x = Samplepicture(
           imagepath,
           DateTime.now().toString(),
@@ -228,7 +215,6 @@ class CameraProvider extends ChangeNotifier {
       if (clear) {
         cleartags();
       }
-      notifyListeners();
       Navigator.pop(context);
     } else {
       Scaffold.of(context).showSnackBar(SnackBar(
@@ -262,19 +248,20 @@ class CameraProvider extends ChangeNotifier {
     });
   }
 
-  Future<Position> _determinePosition() async {
+  Future<Position> _determinePosition(BuildContext context) async {
     bool serviceEnabled;
     LocationPermission permission;
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
+      Scaffold.of(context).showSnackBar(
+          SnackBar(content: Text("برجاء تفعيل نظام تحديد المواقع")));
     }
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permantly denied, we cannot request permissions.');
+      Scaffold.of(context).showSnackBar(
+          SnackBar(content: Text("برجاء تفعيل نظام تحديد المواقع")));
     }
 
     if (permission == LocationPermission.denied) {

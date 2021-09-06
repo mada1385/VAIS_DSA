@@ -39,8 +39,8 @@ dependencies:
   path_provider:
   camera: 
   provider: 
-  gallery_saver: ^2.0.3 
-  image_picker: 
+  
+  
   hive:
   hive_flutter:
   firebase_core: 

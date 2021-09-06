@@ -174,7 +174,7 @@ class Mainscreen extends StatelessWidget {
                         showDialog(
                           context: context,
                           barrierDismissible: false,
-                          child: AlertDialog(
+                          builder: (context) => AlertDialog(
                             content: Container(
                               color: Colors.white,
                               height: 250,

@@ -66,6 +66,7 @@ class MyApp extends StatelessWidget {
         // ),
       ],
       child: MaterialApp(
+ 
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,

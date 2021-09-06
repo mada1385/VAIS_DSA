@@ -1,12 +1,11 @@
-import 'dart:io';
-
+import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:vaisdsa/provider/camera_provider.dart';
 import 'package:xml/xml.dart' as xml;
-
 import 'package:vaisdsa/screens/imagedisply.dart';
 
 class TakePictureScreen extends StatefulWidget {
@@ -34,7 +33,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       Provider.of<CameraProvider>(context, listen: false).selectedcamera,
 
       // Define the resolution to use.
-      ResolutionPreset.medium,
+      ResolutionPreset.max,
     );
 
     // print(widget.camera.name);
@@ -55,7 +54,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
         showDialog(
           context: context,
           barrierDismissible: false,
-          child: AlertDialog(
+          builder: (context) => AlertDialog(
             content: Container(
               color: Colors.white,
               height: 250,
@@ -235,45 +234,48 @@ class Snackbutton extends StatelessWidget {
     return FlatButton(
       color: Colors.white,
       onPressed: () async {
+        HapticFeedback.heavyImpact();
         String hsiimagepath;
 
         try {
           await _initializeControllerFuture;
-
           final phoneimage = await _controller.takePicture();
-          // await get("http://192.168.1.254/?custom=1&cmd=1001").then((value) {
-          //   final document = xml.XmlDocument.parse(value.body)
-          //       .getElement("Function")
-          //       .getElement("File")
-          //       .getElement("FPATH")
-          //       .firstChild
-          //       .text
-          //       .replaceAll(r"\", r"/")
-          //       .replaceAll("A:", "");
-          //   print(document);
-          //   hsiimagepath = "http://192.168.1.254" + document;
-          //   print(phoneimage.path);
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => DisplayPictureScreen(
-                  localphoto: phoneimage.path, hsiphoto: hsiimagepath),
-            ),
-          );
-          // }).catchError((onError) {
-          //   if (onError.osError.errorCode == 110)
-          //     Scaffold.of(context).showSnackBar(SnackBar(
-          //         backgroundColor: Colors.white,
-          //         content: Container(
-          //           child: Text(
-          //             "برجاء توصيل الهاتف بشبكة الكاميرا",
-          //             style: TextStyle(
-          //                 fontWeight: FontWeight.bold,
-          //                 fontSize: 20,
-          //                 color: Colors.red),
-          //           ),
-          //         )));
-          //   print("================>" + onError.toString());
-          // });
+          await get(Uri.parse("http://192.168.1.254/?custom=1&cmd=1001"))
+              .then((value) async {
+            final document = xml.XmlDocument.parse(value.body)
+                .getElement("Function")
+                .getElement("File")
+                .getElement("FPATH")
+                .firstChild
+                .text
+                .replaceAll(r"\", r"/")
+                .replaceAll("A:", "");
+            print(document);
+            hsiimagepath = "http://192.168.1.254" + document;
+            print(phoneimage.path);
+            print(hsiimagepath);
+
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => DisplayPictureScreen(
+                    localphoto: phoneimage.path, hsiphoto: hsiimagepath),
+              ),
+            );
+          }).catchError((onError) {
+            if (onError.osError.errorCode == 110)
+              Scaffold.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.white,
+                  content: Container(
+                    child: Text(
+                      "برجاء توصيل الهاتف بشبكة الكاميرا",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.red),
+                    ),
+                  )));
+            print("================>" + onError.toString());
+          });
         } catch (e) {}
       },
       child: Padding(

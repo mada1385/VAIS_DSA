@@ -24,7 +24,7 @@ class Profileoptions extends StatelessWidget {
                 ? <Widget>[
                     Profileoptioncard(
                         ontap: () async {
-                          await get("https://reqres.in/api/products/3")
+                          await get(Uri.parse("https://reqres.in/api/products/3"))
                               .then((value) {
                             Provider.of<CameraProvider>(context, listen: false)
                                 .synctofirebase(context);
@@ -85,7 +85,7 @@ class Profileoptions extends StatelessWidget {
                 : <Widget>[
                     Profileoptioncard(
                         ontap: () async {
-                          await get("https://reqres.in/api/products/3")
+                          await get(Uri.parse("https://reqres.in/api/products/3"))
                               .then((value) {
                             Provider.of<CameraProvider>(context, listen: false)
                                 .synctofirebase(context);
